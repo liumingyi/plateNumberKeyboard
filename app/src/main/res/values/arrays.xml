@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="plate_cities">
+    <!-- 32个-->
+    <item name="p_bj">京</item>
+    <item name="p_tj">津</item>
+    <item name="p_hbei">冀</item>
+    <item name="p_sx">晋</item>
+    <item name="p_nm">蒙</item>
+    <item name="p_ln">辽</item>
+    <item name="p_jl">吉</item>
+    <item name="p_hlj">黑</item>
+    <item name="p_sh">沪</item>
+    <item name="p_js">苏</item>
+    <item name="p_zj">浙</item>
+    <item name="p_ah">皖</item>
+    <item name="p_fj">闽</item>
+    <item name="p_jx">赣</item>
+    <item name="p_sd">鲁</item>
+    <item name="p_hn">豫</item>
+    <item name="p_hub">鄂</item>
+    <item name="p_hnan">湘</item>
+    <item name="p_gd">粤</item>
+    <item name="p_gx">桂</item>
+    <item name="p_hain">琼</item>
+    <item name="p_cq">渝</item>
+    <item name="p_sc">川</item>
+    <item name="p_gz">贵</item>
+    <item name="p_yn">云</item>
+    <item name="p_xz">藏</item>
+    <item name="p_shanx">陕</item>
+    <item name="p_gs">甘</item>
+    <item name="p_qh">青</item>
+    <item name="p_nx">宁</item>
+    <item name="p_xj">新</item>
+    <item name="p_shi">使</item>
+  </string-array>
+  <string-array name="plate_extra">
+    <item name="p_wj">WJ</item>
+    <item name="p_jc">军车车牌</item>
+  </string-array>
+</resources>
