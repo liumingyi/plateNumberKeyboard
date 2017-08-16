@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import org.liumingyi.carnokeyboard.R;
 
 /**
@@ -21,6 +22,22 @@ public class KeyboardFragment extends Fragment {
         @Override public void onClick(String value) {
           if (inputListener != null) {
             inputListener.onInput(value);
+          }
+        }
+
+        @Override public void goLetterKeyboard() {
+          Toast.makeText(getActivity(), ">>还没有!<<", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override public void delete() {
+          if (inputListener != null) {
+            inputListener.delete();
+          }
+        }
+
+        @Override public void confirm() {
+          if (inputListener != null) {
+            inputListener.confirm();
           }
         }
       };
@@ -53,5 +70,9 @@ public class KeyboardFragment extends Fragment {
 
   interface KeyboardInputListener {
     void onInput(String value);
+
+    void delete();
+
+    void confirm();
   }
 }

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -92,7 +93,26 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
           //Toast.makeText(getContext(), "Value : " + value, Toast.LENGTH_SHORT).show();
           append(value);
         }
+
+        @Override public void delete() {
+          deleteLastLetter();
+        }
+
+        @Override public void confirm() {
+          hideKeyboard();
+        }
       };
+
+  /**
+   * 删除最后一个字符
+   */
+  private void deleteLastLetter() {
+    Editable text = getText();
+    if (text.length() < 1) {
+      return;
+    }
+    text.delete(text.length() - 1, text.length());
+  }
 
   public PlateNumberEditText(Context context) {
     super(context);
