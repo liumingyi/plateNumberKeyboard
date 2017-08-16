@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
 
   private final String[] cities;
   private Paint paint;
+  private Paint bgPaint;
   private Paint textPaint;
 
   private final int rowCount = DEFAULT_ROW_COUNT;/* 每一行几个字*/
@@ -42,6 +44,8 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
   private int itemWidth;
 
   private String startCity;/* 第一个城市简称*/
+
+  private PointF touchPoint;//点击的点
 
   private GestureDetector detector;
   private android.view.GestureDetector.OnGestureListener gestureListener =
@@ -135,6 +139,9 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
     paint.setStyle(Paint.Style.STROKE);
     paint.setStrokeWidth(1);
     paint.setColor(Color.BLACK);
+
+    bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    bgPaint.setColor(Color.GREEN);
 
     textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     textPaint.setColor(Color.BLACK);
@@ -263,17 +270,58 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
   }
 
   /**
-   * 绘制 - 最终进行绘制的方法
+   * 绘制 - 实际进行绘制的方法
    */
   private void drawButton(Canvas canvas, int left, int top, int right, int bottom, String value) {
+    if (touchPoint != null && checkPointContains(touchPoint, left, top, right, bottom)) {
+      canvas.drawRect(left, top, right, bottom, bgPaint);
+    }
     canvas.drawRect(left, top, right, bottom, paint);
     canvas.drawText(value, (left + right) / 2f, (bottom + top) / 2f + textSizePx / 2f, textPaint);
+  }
+
+  /**
+   * 检测Point是否在4个点代表的矩形范围内
+   */
+  private boolean checkPointContains(PointF point, int left, int top, int right, int bottom) {
+    float x = point.x;
+    float y = point.y;
+    return x >= left && x <= right && y >= top && y <= bottom;
   }
 
   /* 点击事件处理*/
   @Override public boolean onTouch(View view, MotionEvent motionEvent) {
     /* 点击事件交给手势检测处理*/
+
+    if (MotionEvent.ACTION_DOWN == motionEvent.getAction()) {
+      showClickEffect(motionEvent.getX(), motionEvent.getY());
+    } else if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
+      dismissClickEffect();
+    }
+
     return detector.onTouchEvent(motionEvent);
+  }
+
+  /**
+   * 消除点击效果
+   */
+  private void dismissClickEffect() {
+    if (touchPoint == null) {
+      return;
+    }
+    touchPoint = null;
+    invalidate();
+  }
+
+  /**
+   * 显示点击效果
+   */
+  private void showClickEffect(float x, float y) {
+    if (touchPoint != null) {
+      return;
+    }
+    touchPoint = new PointF(x, y);
+    invalidate();
   }
 
   /**
