@@ -5,7 +5,7 @@
     android:orientation="vertical"
     >
 
-  <org.liumingyi.carnokeyboard.plateinputer.PlateNumberKeyboard
+  <org.liumingyi.carnokeyboard.plateinputer.PlateCityKeyboard
       android:id="@+id/plate_keyboard"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

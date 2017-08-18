@@ -18,7 +18,7 @@ import org.liumingyi.carnokeyboard.R;
  * Created by liumingyi on 2017/8/14.
  */
 
-public class PlateNumberKeyboard extends View {
+public class PlateCityKeyboard extends View {
 
   private static final String TAG = "PlateKeyboard";
 
@@ -119,17 +119,17 @@ public class PlateNumberKeyboard extends View {
     firstTwoRowCount = TOTAL_COLUMNS * 2 - 3;
   }
 
-  public PlateNumberKeyboard(Context context) {
+  public PlateCityKeyboard(Context context) {
     super(context);
     init();
   }
 
-  public PlateNumberKeyboard(Context context, @Nullable AttributeSet attrs) {
+  public PlateCityKeyboard(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
     init();
   }
 
-  public PlateNumberKeyboard(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+  public PlateCityKeyboard(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init();
   }

@@ -18,11 +18,11 @@ public class KeyboardFragment extends Fragment {
 
   private KeyboardInputListener inputListener;
 
-  private PlateNumberKeyboard plateKeyboard;
+  private PlateCityKeyboard plateKeyboard;
   private PlateLetterKeyboard letterKeyboard;
 
-  private PlateNumberKeyboard.PlateKeyboardClickListener plateKeyboardClickListener =
-      new PlateNumberKeyboard.PlateKeyboardClickListener() {
+  private PlateCityKeyboard.PlateKeyboardClickListener plateKeyboardClickListener =
+      new PlateCityKeyboard.PlateKeyboardClickListener() {
         @Override public void onClick(String value) {
           if (inputListener != null) {
             inputListener.onInput(value);
