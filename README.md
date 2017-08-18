@@ -12,7 +12,7 @@
  
  2. KeyboardFragment 是放置键盘控件的Fragment。放置了两个键盘 -> 城市简称键盘（PlateCityKeyboard） & 数字字母键盘（PlateLetterKeyboard）。两个键盘的绘制方式不一样，还没想好怎么统一一下。
 
- 3. PlateCityKeyboard ，从资源文件中去所有城市的简称，以固定的行数，列数，固定的样式进行绘制。
+ 3. PlateCityKeyboard ，从资源文件中取所有城市的简称，以固定的行数，列数，固定的样式进行绘制。
 
  4. PlateLetterKeyboard ，有一个配置类 KeyboardConfig。需要绘制的数据按行设置，每一行根据数据的数量计算列数。
 	
