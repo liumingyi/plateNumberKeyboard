@@ -35,8 +35,10 @@
     <item name="p_xj">新</item>
     <item name="p_shi">使</item>
   </string-array>
-  <string-array name="plate_extra">
-    <item name="p_wj">WJ</item>
-    <item name="p_jc">军车车牌</item>
+
+  <string-array name="plate_letter_function">
+    <item name="pl_cities">省市简称</item>
+    <item name="pl_delete">删除</item>
+    <item name="pl_confirm">确认</item>
   </string-array>
 </resources>

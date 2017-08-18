@@ -9,6 +9,13 @@
       android:id="@+id/plate_keyboard"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:visibility="gone"
+      />
+
+  <org.liumingyi.carnokeyboard.plateinputer.PlateLetterKeyboard
+      android:id="@+id/plate_letter_keyboard"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
       />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package org.liumingyi.carnokeyboard.plateinputer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PointF;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -67,5 +68,14 @@ class KeyboardUtils {
     Display display = activity.getWindowManager().getDefaultDisplay();
     display.getMetrics(metrics);
     return metrics.widthPixels;
+  }
+
+  /**
+   * 检测Point是否在4个点代表的矩形范围内
+   */
+  static boolean checkPointContains(PointF point, int left, int top, int right, int bottom) {
+    float x = point.x;
+    float y = point.y;
+    return x >= left && x <= right && y >= top && y <= bottom;
   }
 }

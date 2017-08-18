@@ -18,13 +18,14 @@ import org.liumingyi.carnokeyboard.R;
  * Created by liumingyi on 2017/8/14.
  */
 
-public class PlateNumberKeyboard extends View implements View.OnTouchListener {
+public class PlateNumberKeyboard extends View {
 
   private static final String TAG = "PlateKeyboard";
 
-  private static final int DEFAULT_ROW_COUNT = 7;
   private static final float TEXT_SIZE = 16;//sp
-  private static final int TOTAL_ROWS = 6;//总行(排)数
+  private static final int TOTAL_ROWS = 6;/* 总行数*/
+  private static final int TOTAL_COLUMNS = 7;/* 总列数*/
+
   private static final int KEY_GO_LETTER_KEYBOARD = 1000;
   private static final int KEY_DELETE = 1001;
   private static final int KEY_CONFIRM = 1002;
@@ -36,7 +37,6 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
   private Paint bgPaint;
   private Paint textPaint;
 
-  private final int rowCount = DEFAULT_ROW_COUNT;/* 每一行几个字*/
   private final int firstTwoRowCount;/* 前两行总数*/
 
   private int width;
@@ -116,7 +116,7 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
   {
     cities = getResources().getStringArray(R.array.plate_cities);
     textSizePx = KeyboardUtils.dip2px(getContext(), TEXT_SIZE);
-    firstTwoRowCount = rowCount * 2 - 3;
+    firstTwoRowCount = TOTAL_COLUMNS * 2 - 3;
   }
 
   public PlateNumberKeyboard(Context context) {
@@ -148,17 +148,16 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
     textPaint.setTextAlign(Paint.Align.CENTER);
     textPaint.setTextSize(textSizePx);
 
-    setOnTouchListener(this);
     detector = new GestureDetector(getContext(), gestureListener);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     width = MeasureSpec.getSize(widthMeasureSpec);
-    int height = MeasureSpec.getSize(heightMeasureSpec);
-    Log.d(TAG, "onMeasure: " + width + " , " + height);
-    itemHeight = itemWidth = width / rowCount;
-    height = itemHeight * TOTAL_ROWS;
+    //int height = MeasureSpec.getSize(heightMeasureSpec);
+    //Log.d(TAG, "onMeasure: " + width + " , " + height);
+    itemHeight = itemWidth = width / TOTAL_COLUMNS;
+    int height = itemHeight * TOTAL_ROWS;
     setMeasuredDimension(width, height);
   }
 
@@ -207,8 +206,8 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
       return;
     }
     /* 前两行特殊绘制*/
-    int row = (i + 1) / rowCount;
-    int column = (i + 1 + row * 2) % rowCount;
+    int row = (i + 1) / TOTAL_COLUMNS;
+    int column = (i + 1 + row * 2) % TOTAL_COLUMNS;
 
     drawButton(canvas, cities[i], row, column);
   }
@@ -217,8 +216,8 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
    * 绘制 - 后面三排的item
    */
   private void drawNormalItem(Canvas canvas, int i) {
-    int row = (i - firstTwoRowCount) / rowCount + 2;
-    int column = (i - firstTwoRowCount) % rowCount;
+    int row = (i - firstTwoRowCount) / TOTAL_COLUMNS + 2;
+    int column = (i - firstTwoRowCount) % TOTAL_COLUMNS;
 
     drawButton(canvas, cities[i], row, column);
   }
@@ -290,16 +289,16 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
   }
 
   /* 点击事件处理*/
-  @Override public boolean onTouch(View view, MotionEvent motionEvent) {
-    /* 点击事件交给手势检测处理*/
-
-    if (MotionEvent.ACTION_DOWN == motionEvent.getAction()) {
-      showClickEffect(motionEvent.getX(), motionEvent.getY());
-    } else if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
+  @Override public boolean onTouchEvent(MotionEvent event) {
+    /* 点击效果*/
+    if (MotionEvent.ACTION_DOWN == event.getAction()) {
+      showClickEffect(event.getX(), event.getY());
+    } else if (MotionEvent.ACTION_UP == event.getAction()) {
       dismissClickEffect();
     }
 
-    return detector.onTouchEvent(motionEvent);
+    /* 点击事件交给手势检测处理*/
+    return detector.onTouchEvent(event);
   }
 
   /**
@@ -337,12 +336,12 @@ public class PlateNumberKeyboard extends View implements View.OnTouchListener {
       if (column < 2) {
         return 0;
       }
-      return column + rowCount * row - 1 - 2 * row;/* 1表示第一排开头多用的1个格子 2表示是第二排开头被占用的两个普通格子*/
+      return column + TOTAL_COLUMNS * row - 1 - 2 * row;/* 1表示第一排开头多用的1个格子 2表示是第二排开头被占用的两个普通格子*/
     }
 
     /*  中间三行普通按钮*/
     if (row >= 2 && row < TOTAL_ROWS - 1) {
-      return column + (row - 2) * rowCount + firstTwoRowCount;/* row - 2 表示去掉前两排，+ firstTwoRowCount 表示叫上前两排真实占用的鸽子数量*/
+      return column + (row - 2) * TOTAL_COLUMNS + firstTwoRowCount;/* row - 2 表示去掉前两排，+ firstTwoRowCount 表示叫上前两排真实占用的鸽子数量*/
     }
 
     /* 最后一行的特殊功能按钮 {键盘切换，删除，确认}*/

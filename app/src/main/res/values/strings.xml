@@ -3,4 +3,5 @@
   <string name="delete">删除</string>
   <string name="letter_number_keyboard">字母和数字</string>
   <string name="confirm">确认</string>
+  <string name="simple_city_name">城市简称</string>
 </resources>

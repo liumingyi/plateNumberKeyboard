@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import org.liumingyi.carnokeyboard.R;
 
 /**
@@ -17,7 +16,12 @@ import org.liumingyi.carnokeyboard.R;
 
 public class KeyboardFragment extends Fragment {
 
-  private PlateNumberKeyboard.PlateKeyboardClickListener clickListener =
+  private KeyboardInputListener inputListener;
+
+  private PlateNumberKeyboard plateKeyboard;
+  private PlateLetterKeyboard letterKeyboard;
+
+  private PlateNumberKeyboard.PlateKeyboardClickListener plateKeyboardClickListener =
       new PlateNumberKeyboard.PlateKeyboardClickListener() {
         @Override public void onClick(String value) {
           if (inputListener != null) {
@@ -26,7 +30,8 @@ public class KeyboardFragment extends Fragment {
         }
 
         @Override public void goLetterKeyboard() {
-          Toast.makeText(getActivity(), ">>还没有!<<", Toast.LENGTH_SHORT).show();
+          letterKeyboard.setVisibility(View.VISIBLE);
+          plateKeyboard.setVisibility(View.GONE);
         }
 
         @Override public void delete() {
@@ -42,7 +47,31 @@ public class KeyboardFragment extends Fragment {
         }
       };
 
-  private KeyboardInputListener inputListener;
+  private PlateLetterKeyboard.PlateKeyboardClickListener letterKeyboardClickListener =
+      new PlateLetterKeyboard.PlateKeyboardClickListener() {
+        @Override public void onClick(String value) {
+          if (inputListener != null) {
+            inputListener.onInput(value);
+          }
+        }
+
+        @Override public void goLetterKeyboard() {
+          letterKeyboard.setVisibility(View.GONE);
+          plateKeyboard.setVisibility(View.VISIBLE);
+        }
+
+        @Override public void delete() {
+          if (inputListener != null) {
+            inputListener.delete();
+          }
+        }
+
+        @Override public void confirm() {
+          if (inputListener != null) {
+            inputListener.confirm();
+          }
+        }
+      };
 
   public static KeyboardFragment newInstance() {
     return new KeyboardFragment();
@@ -60,9 +89,41 @@ public class KeyboardFragment extends Fragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    PlateNumberKeyboard plateKeyboard = view.findViewById(R.id.plate_keyboard);
-    plateKeyboard.setOnPlateKeyboardClickListener(clickListener);
+    plateKeyboard = view.findViewById(R.id.plate_keyboard);
+    letterKeyboard = view.findViewById(R.id.plate_letter_keyboard);
+    plateKeyboard.setOnPlateKeyboardClickListener(plateKeyboardClickListener);
+    letterKeyboard.setOnPlateKeyboardClickListener(letterKeyboardClickListener);
   }
+
+  //private void initLetterKeyboard() {
+  //  final String[] line_0 = new String[] {
+  //      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
+  //  };
+  //  final String[] line_1 = new String[] {
+  //      "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+  //  };
+  //  final String[] line_2 = new String[] {
+  //      "A", "S", "D", "F", "G", "H", "J", "K", "L",
+  //  };
+  //  final String[] line_3 = new String[] {
+  //      "Z", "X", "C", "V", "B", "N", "M",
+  //  };
+  //  PlateKey[] funcKeys = new PlateKey[3];
+  //  funcKeys[0] =
+  //      new PlateKey(PlateKey.TYPE_SWITCH, getResources().getString(R.string.simple_city_name));
+  //  funcKeys[1] = new PlateKey(PlateKey.TYPE_DELETE, getResources().getString(R.string.delete));
+  //  funcKeys[2] = new PlateKey(PlateKey.TYPE_CONFIRM, getResources().getString(R.string.confirm));
+  //
+  //  KeyboardConfig letterConfig = new KeyboardConfig();
+  //  letterConfig.addLine(line_0);
+  //  letterConfig.addLine(line_1);
+  //  letterConfig.addLine(line_2);
+  //  letterConfig.addLine(line_3);
+  //  letterConfig.addLine(funcKeys);
+  //  letterKeyboard.setConfig(letterConfig);
+  //}
+
+  ////////////////////////////////////////
 
   void setPlateNumberKeyboardListener(KeyboardInputListener inputListener) {
     this.inputListener = inputListener;
