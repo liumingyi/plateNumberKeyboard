@@ -3,10 +3,14 @@ package org.liumingyi.carnokeyboard.plateinputer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import org.liumingyi.carnokeyboard.R;
+import org.liumingyi.carnokeyboard.plateinputer.citykeyboard.PlateCityKeyboard;
+import org.liumingyi.carnokeyboard.plateinputer.letterkeyboard.PlateLetterKeyboard;
+import org.liumingyi.carnokeyboard.plateinputer.utils.PlateHelper;
 
 /**
  * Fragment for Plate keyboard
@@ -18,20 +22,22 @@ public class KeyboardFragment extends Fragment {
 
   private KeyboardInputListener inputListener;
 
-  private PlateCityKeyboard plateKeyboard;
+  private PlateCityKeyboard cityKeyboard;
   private PlateLetterKeyboard letterKeyboard;
 
-  private PlateCityKeyboard.PlateKeyboardClickListener plateKeyboardClickListener =
-      new PlateCityKeyboard.PlateKeyboardClickListener() {
+  private String firstCity;
+
+  private Keyboard.PlateKeyboardClickListener keyboardClickListener =
+      new Keyboard.PlateKeyboardClickListener() {
         @Override public void onClick(String value) {
           if (inputListener != null) {
             inputListener.onInput(value);
           }
+          markCity(value);
         }
 
-        @Override public void goLetterKeyboard() {
-          letterKeyboard.setVisibility(View.VISIBLE);
-          plateKeyboard.setVisibility(View.GONE);
+        @Override public void toggle() {
+          switchKeyboard();
         }
 
         @Override public void delete() {
@@ -47,31 +53,19 @@ public class KeyboardFragment extends Fragment {
         }
       };
 
-  private PlateLetterKeyboard.PlateKeyboardClickListener letterKeyboardClickListener =
-      new PlateLetterKeyboard.PlateKeyboardClickListener() {
-        @Override public void onClick(String value) {
-          if (inputListener != null) {
-            inputListener.onInput(value);
-          }
-        }
+  private void markCity(String value) {
+    if (cityKeyboard.getVisibility() == View.VISIBLE) {
+      this.firstCity = value;
+    }
+  }
 
-        @Override public void goLetterKeyboard() {
-          letterKeyboard.setVisibility(View.GONE);
-          plateKeyboard.setVisibility(View.VISIBLE);
-        }
-
-        @Override public void delete() {
-          if (inputListener != null) {
-            inputListener.delete();
-          }
-        }
-
-        @Override public void confirm() {
-          if (inputListener != null) {
-            inputListener.confirm();
-          }
-        }
-      };
+  public void saveCity() {
+    if (TextUtils.isEmpty(firstCity)) {
+      return;
+    }
+    PlateHelper helper = new PlateHelper(getActivity());
+    helper.saveCity(firstCity);
+  }
 
   public static KeyboardFragment newInstance() {
     return new KeyboardFragment();
@@ -89,39 +83,35 @@ public class KeyboardFragment extends Fragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    plateKeyboard = view.findViewById(R.id.plate_keyboard);
+    cityKeyboard = view.findViewById(R.id.plate_keyboard);
     letterKeyboard = view.findViewById(R.id.plate_letter_keyboard);
-    plateKeyboard.setOnPlateKeyboardClickListener(plateKeyboardClickListener);
-    letterKeyboard.setOnPlateKeyboardClickListener(letterKeyboardClickListener);
+    cityKeyboard.setOnPlateKeyboardClickListener(keyboardClickListener);
+    letterKeyboard.setOnPlateKeyboardClickListener(keyboardClickListener);
+
+    PlateHelper helper = new PlateHelper(getActivity());
+    String city = helper.getCity();
+    if (!TextUtils.isEmpty(city)) {
+      cityKeyboard.setFirstCity(city);
+    }
   }
 
-  //private void initLetterKeyboard() {
-  //  final String[] line_0 = new String[] {
-  //      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
-  //  };
-  //  final String[] line_1 = new String[] {
-  //      "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-  //  };
-  //  final String[] line_2 = new String[] {
-  //      "A", "S", "D", "F", "G", "H", "J", "K", "L",
-  //  };
-  //  final String[] line_3 = new String[] {
-  //      "Z", "X", "C", "V", "B", "N", "M",
-  //  };
-  //  PlateKey[] funcKeys = new PlateKey[3];
-  //  funcKeys[0] =
-  //      new PlateKey(PlateKey.TYPE_SWITCH, getResources().getString(R.string.simple_city_name));
-  //  funcKeys[1] = new PlateKey(PlateKey.TYPE_DELETE, getResources().getString(R.string.delete));
-  //  funcKeys[2] = new PlateKey(PlateKey.TYPE_CONFIRM, getResources().getString(R.string.confirm));
-  //
-  //  KeyboardConfig letterConfig = new KeyboardConfig();
-  //  letterConfig.addLine(line_0);
-  //  letterConfig.addLine(line_1);
-  //  letterConfig.addLine(line_2);
-  //  letterConfig.addLine(line_3);
-  //  letterConfig.addLine(funcKeys);
-  //  letterKeyboard.setConfig(letterConfig);
-  //}
+  private void switchKeyboard() {
+    if (letterKeyboard.getVisibility() == View.VISIBLE) {
+      showCityKeyboard();
+    } else {
+      showLetterKeyboard();
+    }
+  }
+
+  private void showLetterKeyboard() {
+    letterKeyboard.setVisibility(View.VISIBLE);
+    cityKeyboard.setVisibility(View.GONE);
+  }
+
+  private void showCityKeyboard() {
+    cityKeyboard.setVisibility(View.VISIBLE);
+    letterKeyboard.setVisibility(View.GONE);
+  }
 
   ////////////////////////////////////////
 

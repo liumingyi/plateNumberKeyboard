@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import org.liumingyi.carnokeyboard.plateinputer.utils.KeyboardUtils;
 
 /**
  * 呼出车牌号键盘的输入框
@@ -65,6 +66,9 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
     @Override public void onAnimationEnd(Animator animator) {
       isKeyboardShow = false;
+      if (keyboardFragment != null) {
+        keyboardFragment.saveCity();
+      }
       hideFragment();
     }
 

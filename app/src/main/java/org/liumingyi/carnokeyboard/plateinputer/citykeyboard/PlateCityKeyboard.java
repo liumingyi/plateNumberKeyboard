@@ -1,4 +1,4 @@
-package org.liumingyi.carnokeyboard.plateinputer;
+package org.liumingyi.carnokeyboard.plateinputer.citykeyboard;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,19 +6,25 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.liumingyi.carnokeyboard.R;
+import org.liumingyi.carnokeyboard.plateinputer.Keyboard;
+import org.liumingyi.carnokeyboard.plateinputer.utils.KeyboardUtils;
 
 /**
  * 车牌号输入键盘
  * Created by liumingyi on 2017/8/14.
  */
 
-public class PlateCityKeyboard extends View {
+public class PlateCityKeyboard extends View implements Keyboard {
 
   private static final String TAG = "PlateKeyboard";
 
@@ -32,7 +38,7 @@ public class PlateCityKeyboard extends View {
 
   private final float textSizePx;//px
 
-  private final String[] cities;
+  private String[] cities;
   private Paint paint;
   private Paint bgPaint;
   private Paint textPaint;
@@ -79,7 +85,7 @@ public class PlateCityKeyboard extends View {
           switch (index) {
             case KEY_GO_LETTER_KEYBOARD:
               if (clickListener != null) {
-                clickListener.goLetterKeyboard();
+                clickListener.toggle();
               }
               break;
             case KEY_DELETE:
@@ -114,7 +120,6 @@ public class PlateCityKeyboard extends View {
       };
 
   {
-    cities = getResources().getStringArray(R.array.plate_cities);
     textSizePx = KeyboardUtils.dip2px(getContext(), TEXT_SIZE);
     firstTwoRowCount = TOTAL_COLUMNS * 2 - 3;
   }
@@ -149,6 +154,22 @@ public class PlateCityKeyboard extends View {
     textPaint.setTextSize(textSizePx);
 
     detector = new GestureDetector(getContext(), gestureListener);
+    cities = getResources().getStringArray(R.array.plate_cities);
+  }
+
+  public void setFirstCity(String firstCity) {
+    if (TextUtils.isEmpty(firstCity)) {
+      return;
+    }
+
+    List<String> list = Arrays.asList(cities);
+    List<String> cityList = new ArrayList<>(list);
+    if (cityList.contains(firstCity)) {
+      cityList.remove(firstCity);
+      cityList.add(0, firstCity);
+    }
+
+    cities = cityList.toArray(new String[cityList.size()]);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -177,6 +198,11 @@ public class PlateCityKeyboard extends View {
    * fix me: 将第一个大按钮占用格子数写活
    */
   @Override protected void onDraw(Canvas canvas) {
+
+    if (cities == null || cities.length == 0) {
+      return;
+    }
+
     drawTopLine(canvas);
 
     for (int i = 0; i < cities.length; i++) {
@@ -364,17 +390,7 @@ public class PlateCityKeyboard extends View {
 
   private PlateKeyboardClickListener clickListener;
 
-  interface PlateKeyboardClickListener {
-    void onClick(String value);
-
-    void goLetterKeyboard();
-
-    void delete();
-
-    void confirm();
-  }
-
-  void setOnPlateKeyboardClickListener(PlateKeyboardClickListener clickListener) {
+  @Override public void setOnPlateKeyboardClickListener(PlateKeyboardClickListener clickListener) {
     this.clickListener = clickListener;
   }
 }

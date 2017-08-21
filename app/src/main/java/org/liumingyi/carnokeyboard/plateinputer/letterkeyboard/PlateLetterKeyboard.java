@@ -1,4 +1,4 @@
-package org.liumingyi.carnokeyboard.plateinputer;
+package org.liumingyi.carnokeyboard.plateinputer.letterkeyboard;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,13 +11,15 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import org.liumingyi.carnokeyboard.R;
+import org.liumingyi.carnokeyboard.plateinputer.Keyboard;
+import org.liumingyi.carnokeyboard.plateinputer.utils.KeyboardUtils;
 
 /**
  * 字母 + 数字 键盘
  * Created by liumingyi on 2017/8/17.
  */
 
-public class PlateLetterKeyboard extends View {
+public class PlateLetterKeyboard extends View implements Keyboard {
 
   private static final float TEXT_SIZE = 16;
 
@@ -75,7 +77,7 @@ public class PlateLetterKeyboard extends View {
               break;
             case PlateKey.TYPE_SWITCH:
               if (clickListener != null) {
-                clickListener.goLetterKeyboard();
+                clickListener.toggle();
               }
               break;
             case PlateKey.TYPE_DELETE:
@@ -256,17 +258,7 @@ public class PlateLetterKeyboard extends View {
 
   private PlateKeyboardClickListener clickListener;
 
-  interface PlateKeyboardClickListener {
-    void onClick(String value);
-
-    void goLetterKeyboard();
-
-    void delete();
-
-    void confirm();
-  }
-
-  void setOnPlateKeyboardClickListener(PlateKeyboardClickListener clickListener) {
+  @Override public void setOnPlateKeyboardClickListener(PlateKeyboardClickListener clickListener) {
     this.clickListener = clickListener;
   }
 }

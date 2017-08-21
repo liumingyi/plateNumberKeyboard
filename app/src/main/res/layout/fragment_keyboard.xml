@@ -5,17 +5,17 @@
     android:orientation="vertical"
     >
 
-  <org.liumingyi.carnokeyboard.plateinputer.PlateCityKeyboard
+  <org.liumingyi.carnokeyboard.plateinputer.citykeyboard.PlateCityKeyboard
       android:id="@+id/plate_keyboard"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:visibility="gone"
       />
 
-  <org.liumingyi.carnokeyboard.plateinputer.PlateLetterKeyboard
+  <org.liumingyi.carnokeyboard.plateinputer.letterkeyboard.PlateLetterKeyboard
       android:id="@+id/plate_letter_keyboard"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:visibility="gone"
       />
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package org.liumingyi.carnokeyboard.plateinputer;
+package org.liumingyi.carnokeyboard.plateinputer.letterkeyboard;
 
 /**
  * 按钮实体类

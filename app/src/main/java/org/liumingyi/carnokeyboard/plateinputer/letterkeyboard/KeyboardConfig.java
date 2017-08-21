@@ -1,4 +1,4 @@
-package org.liumingyi.carnokeyboard.plateinputer;
+package org.liumingyi.carnokeyboard.plateinputer.letterkeyboard;
 
 import java.util.ArrayList;
 import java.util.List;
