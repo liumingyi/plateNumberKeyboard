@@ -8,7 +8,6 @@ import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,7 +74,6 @@ public class PlateCityKeyboard extends View implements Keyboard {
 
           if (index >= 0 && index < cities.length) {
             String city = cities[index];
-            Log.d(TAG, "onSingleTapUp: " + city);
             if (clickListener != null) {
               clickListener.onClick(city);
             }
@@ -176,7 +174,6 @@ public class PlateCityKeyboard extends View implements Keyboard {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     width = MeasureSpec.getSize(widthMeasureSpec);
     //int height = MeasureSpec.getSize(heightMeasureSpec);
-    //Log.d(TAG, "onMeasure: " + width + " , " + height);
     itemHeight = itemWidth = width / TOTAL_COLUMNS;
     int height = itemHeight * TOTAL_ROWS;
     setMeasuredDimension(width, height);

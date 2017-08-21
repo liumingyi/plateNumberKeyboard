@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +101,6 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   private KeyboardFragment.KeyboardInputListener inputListener =
       new KeyboardFragment.KeyboardInputListener() {
         @Override public void onInput(String value) {
-          Log.d("======", "onClick: " + value);
           //Toast.makeText(getContext(), "Value : " + value, Toast.LENGTH_SHORT).show();
           append(value);
         }
