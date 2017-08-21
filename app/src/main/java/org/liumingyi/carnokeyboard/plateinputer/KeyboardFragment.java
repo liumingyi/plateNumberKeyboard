@@ -34,6 +34,7 @@ public class KeyboardFragment extends Fragment {
             inputListener.onInput(value);
           }
           markCity(value);
+          showLetterKeyboard();
         }
 
         @Override public void toggle() {
@@ -83,8 +84,8 @@ public class KeyboardFragment extends Fragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    cityKeyboard = view.findViewById(R.id.plate_keyboard);
-    letterKeyboard = view.findViewById(R.id.plate_letter_keyboard);
+    cityKeyboard = (PlateCityKeyboard) view.findViewById(R.id.plate_keyboard);
+    letterKeyboard = (PlateLetterKeyboard) view.findViewById(R.id.plate_letter_keyboard);
     cityKeyboard.setOnPlateKeyboardClickListener(keyboardClickListener);
     letterKeyboard.setOnPlateKeyboardClickListener(keyboardClickListener);
 
@@ -103,12 +104,12 @@ public class KeyboardFragment extends Fragment {
     }
   }
 
-  private void showLetterKeyboard() {
+  public void showLetterKeyboard() {
     letterKeyboard.setVisibility(View.VISIBLE);
     cityKeyboard.setVisibility(View.GONE);
   }
 
-  private void showCityKeyboard() {
+  public void showCityKeyboard() {
     cityKeyboard.setVisibility(View.VISIBLE);
     letterKeyboard.setVisibility(View.GONE);
   }

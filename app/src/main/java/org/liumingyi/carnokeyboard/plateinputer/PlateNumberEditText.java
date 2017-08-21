@@ -44,7 +44,9 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
     }
 
     @Override public void onAnimationEnd(Animator animator) {
-
+      if (callback != null) {
+        callback.onKeyboardShow();
+      }
     }
 
     @Override public void onAnimationCancel(Animator animator) {
@@ -66,10 +68,11 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
     @Override public void onAnimationEnd(Animator animator) {
       isKeyboardShow = false;
-      if (keyboardFragment != null) {
-        keyboardFragment.saveCity();
-      }
+      saveSelectedCity();
       hideFragment();
+      if (callback != null) {
+        callback.onKeyboardHide();
+      }
     }
 
     @Override public void onAnimationCancel(Animator animator) {
@@ -80,6 +83,12 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
     }
   };
+
+  private void saveSelectedCity() {
+    if (keyboardFragment != null) {
+      keyboardFragment.saveCity();
+    }
+  }
 
   /**
    * 键盘的touch事件，消耗事件，防止下传到到下层覆盖区域
@@ -116,6 +125,9 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
       return;
     }
     text.delete(text.length() - 1, text.length());
+    if (text.length() < 1 && keyboardFragment != null) {
+      keyboardFragment.showCityKeyboard();
+    }
   }
 
   public PlateNumberEditText(Context context) {
@@ -141,12 +153,44 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
     setOnTouchListener(this);
   }
 
+  /**
+   * 设置控件
+   *
+   * @param contentArea 键盘之外的区域
+   * @param keyboardArea 键盘所在区域
+   * @param callback 键盘显示，隐藏状态改变的回调接口
+   */
   public void setViews(View contentArea, ViewGroup keyboardArea,
       KeyboardStatusChangedListener callback) {
     this.contentArea = contentArea;
     this.keyboardArea = keyboardArea;
     this.callback = callback;
+    setContentAreaClickListener();
     setKeyboardSize();
+  }
+
+  /**
+   * 设置控件
+   *
+   * @param contentArea 键盘之外的区域
+   * @param keyboardArea 键盘所在区域
+   */
+  public void setViews(View contentArea, ViewGroup keyboardArea) {
+    this.contentArea = contentArea;
+    this.keyboardArea = keyboardArea;
+    setContentAreaClickListener();
+    setKeyboardSize();
+  }
+
+  /**
+   * 设置键盘以外区域的点击事件
+   */
+  private void setContentAreaClickListener() {
+    this.contentArea.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        hideKeyboard();
+      }
+    });
   }
 
   /**
@@ -167,7 +211,7 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   }
 
   /**
-   * 显示键盘
+   * 动画 - 显示键盘
    */
   public void showKeyboard() {
     ObjectAnimator showAnimator =
@@ -179,7 +223,7 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   }
 
   /**
-   * 隐藏键盘
+   * 动画 - 隐藏键盘
    */
   public void hideKeyboard() {
     ObjectAnimator hideAnimator =
@@ -227,6 +271,8 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   }
 
   public interface KeyboardStatusChangedListener {
-    void onStatusChanged();
+    void onKeyboardHide();
+
+    void onKeyboardShow();
   }
 }
