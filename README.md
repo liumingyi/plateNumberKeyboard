@@ -45,8 +45,6 @@
 ### 键盘截图：
 
 
-![城市简称键盘](images/city-keyboard.jpg)
-
-![数字字母键盘](images/letter-keyboard.jpg)
+![城市简称键盘](images/city-keyboard.jpg) ![数字字母键盘](images/letter-keyboard.jpg)
 
 	
