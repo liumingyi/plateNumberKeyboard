@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,30 @@ import org.liumingyi.carnokeyboard.plateinputer.utils.KeyboardUtils;
 
 public class PlateNumberEditText extends AppCompatEditText implements View.OnTouchListener {
 
+  private static final String TAG = "PlateNumberEditText";
+  private static final long ANIMATION_DURATION_KEYBOARD = 500;
+  private static final long ANIMATION_DURATION_CONTENT = 200;
+
   private boolean isKeyboardShow = false;
 
   private int screenHeight;
   private FragmentManager fragmentManager;
   private KeyboardFragment keyboardFragment;
-  private View contentArea;/* 输入框和键盘之外的区域 */
-  private ViewGroup keyboardArea;/* 键盘所在区域 */
+
+  /**
+   * 键盘之外的布局,必须包括了输入框. (如果输入框会被键盘遮挡,用来实现布局上下移动的效果)
+   * 不能
+   */
+  private ViewGroup contentLayout;
+  /**
+   * 键盘所在区域
+   */
+  private ViewGroup keyboardLayout;
+
   private KeyboardStatusChangedListener callback;/* 键盘显示状态回调 */
+
+  private int contentLayoutOffSetY;
+  private boolean isContentMoveUp;
 
   /**
    * 显示键盘的动画监听
@@ -43,6 +60,8 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
     }
 
     @Override public void onAnimationEnd(Animator animator) {
+      isKeyboardShow = true;
+      startContentLayoutAnimation();
       if (callback != null) {
         callback.onKeyboardShow();
       }
@@ -62,7 +81,11 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
    */
   private final Animator.AnimatorListener hideAnimatorListener = new Animator.AnimatorListener() {
     @Override public void onAnimationStart(Animator animator) {
-
+      if (isContentMoveUp) {
+        Log.d(TAG, "需要复位 : " + contentLayoutOffSetY);
+        moveContentLayout(contentLayoutOffSetY, 0);
+        isContentMoveUp = false;
+      }
     }
 
     @Override public void onAnimationEnd(Animator animator) {
@@ -92,7 +115,7 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   /**
    * 键盘的touch事件，消耗事件，防止下传到到下层覆盖区域
    */
-  private OnTouchListener keyboardAreaTouchListener = new OnTouchListener() {
+  private OnTouchListener keyboardLayoutTouchListener = new OnTouchListener() {
     @Override public boolean onTouch(View view, MotionEvent motionEvent) {
       return true;
     }
@@ -154,37 +177,37 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   /**
    * 设置控件
    *
-   * @param contentArea 键盘之外的区域
-   * @param keyboardArea 键盘所在区域
+   * @param contentLayout 键盘之外的区域
+   * @param keyboardLayout 键盘所在区域
    * @param callback 键盘显示，隐藏状态改变的回调接口
    */
-  public void setViews(View contentArea, ViewGroup keyboardArea,
+  public void setViews(ViewGroup contentLayout, ViewGroup keyboardLayout,
       KeyboardStatusChangedListener callback) {
-    this.contentArea = contentArea;
-    this.keyboardArea = keyboardArea;
+    this.contentLayout = contentLayout;
+    this.keyboardLayout = keyboardLayout;
     this.callback = callback;
-    setContentAreaClickListener();
+    setContentLayoutClickListener();
     setKeyboardSize();
   }
 
   /**
    * 设置控件
    *
-   * @param contentArea 键盘之外的区域
-   * @param keyboardArea 键盘所在区域
+   * @param contentLayout 键盘之外的区域
+   * @param keyboardLayout 键盘所在区域
    */
-  public void setViews(View contentArea, ViewGroup keyboardArea) {
-    this.contentArea = contentArea;
-    this.keyboardArea = keyboardArea;
-    setContentAreaClickListener();
+  public void setViews(ViewGroup contentLayout, ViewGroup keyboardLayout) {
+    this.contentLayout = contentLayout;
+    this.keyboardLayout = keyboardLayout;
+    setContentLayoutClickListener();
     setKeyboardSize();
   }
 
   /**
    * 设置键盘以外区域的点击事件
    */
-  private void setContentAreaClickListener() {
-    this.contentArea.setOnClickListener(new OnClickListener() {
+  private void setContentLayoutClickListener() {
+    this.contentLayout.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View view) {
         hideKeyboard();
       }
@@ -195,10 +218,10 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
    * 设置键盘的尺寸
    */
   private void setKeyboardSize() {
-    ViewGroup.LayoutParams layoutParams = this.keyboardArea.getLayoutParams();
+    ViewGroup.LayoutParams layoutParams = this.keyboardLayout.getLayoutParams();
     layoutParams.width = KeyboardUtils.getScreenWidth((Activity) getContext());
-    this.keyboardArea.setLayoutParams(layoutParams);
-    this.keyboardArea.setOnTouchListener(keyboardAreaTouchListener);
+    this.keyboardLayout.setLayoutParams(layoutParams);
+    this.keyboardLayout.setOnTouchListener(keyboardLayoutTouchListener);
   }
 
   @Override public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -209,12 +232,42 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   }
 
   /**
+   * 动画 - 如果EditText会被keyboard挡住，将内容区域向上移动
+   */
+  private void startContentLayoutAnimation() {
+    int[] outLocation = new int[2];
+    getLocationOnScreen(outLocation);
+    int y = outLocation[1];
+    int marginScreenBottom = screenHeight - y - getHeight();
+    Log.d(TAG, "edit height : " + getHeight() + " , " + marginScreenBottom);
+    if (marginScreenBottom < keyboardLayout.getHeight()) {
+      contentLayoutOffSetY = marginScreenBottom - keyboardLayout.getHeight();
+      Log.d(TAG, "需要移动 : " + contentLayoutOffSetY);
+      moveContentLayout(0, contentLayoutOffSetY);
+      isContentMoveUp = true;
+    }
+  }
+
+  /**
+   * 动画 - Y轴移动ContentLayout
+   *
+   * @param start 其实位置
+   * @param end 结束位置
+   */
+  private void moveContentLayout(int start, int end) {
+    ObjectAnimator animator = ObjectAnimator.ofFloat(contentLayout, "translationY", start, end);
+    animator.setDuration(ANIMATION_DURATION_CONTENT);
+    animator.start();
+  }
+
+  /**
    * 动画 - 显示键盘
    */
   public void showKeyboard() {
+    /* 此时keyboard还没有测量，不知道高度，所以使用了屏幕高度 :) 肯定够用！:)*/
     ObjectAnimator showAnimator =
-        ObjectAnimator.ofFloat(keyboardArea, "translationY", screenHeight, 0);
-    showAnimator.setDuration(500);
+        ObjectAnimator.ofFloat(keyboardLayout, "translationY", screenHeight, 0);
+    showAnimator.setDuration(ANIMATION_DURATION_KEYBOARD);
     showAnimator.setInterpolator(new DecelerateInterpolator());
     showAnimator.addListener(showAnimatorListener);
     showAnimator.start();
@@ -225,8 +278,8 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
    */
   public void hideKeyboard() {
     ObjectAnimator hideAnimator =
-        ObjectAnimator.ofFloat(keyboardArea, "translationY", 0, screenHeight);
-    hideAnimator.setDuration(500);
+        ObjectAnimator.ofFloat(keyboardLayout, "translationY", 0, screenHeight);
+    hideAnimator.setDuration(ANIMATION_DURATION_KEYBOARD);
     hideAnimator.setInterpolator(new AccelerateInterpolator());
     hideAnimator.addListener(hideAnimatorListener);
     hideAnimator.start();
@@ -251,9 +304,10 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
     if (keyboardFragment == null) {
       keyboardFragment = KeyboardFragment.newInstance();
       keyboardFragment.setPlateNumberKeyboardListener(inputListener);
-      transaction.add(keyboardArea.getId(), keyboardFragment);
+      transaction.add(keyboardLayout.getId(), keyboardFragment);
     } else {
       transaction.show(keyboardFragment);
+      keyboardFragment.showCityKeyboard();
     }
     transaction.commit();
   }

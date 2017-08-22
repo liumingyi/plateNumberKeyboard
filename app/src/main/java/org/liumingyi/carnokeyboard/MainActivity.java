@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.view.ViewGroup;
 import org.liumingyi.carnokeyboard.plateinputer.PlateNumberEditText;
 
@@ -15,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     PlateNumberEditText plateNumberEditText =
         (PlateNumberEditText) findViewById(R.id.plate_number_edt);
-    View contentArea = findViewById(R.id.content_area);
+    ViewGroup contentArea = (ViewGroup) findViewById(R.id.content_area);
     ViewGroup plateKeyArea = (ViewGroup) findViewById(R.id.plate_number_keyboard);
 
     plateNumberEditText.setViews(contentArea, plateKeyArea);

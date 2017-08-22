@@ -48,8 +48,6 @@ public class PlateCityKeyboard extends View implements Keyboard {
   private int itemHeight;
   private int itemWidth;
 
-  private String startCity;/* 第一个城市简称*/
-
   private PointF touchPoint;//点击的点
 
   private GestureDetector detector;
