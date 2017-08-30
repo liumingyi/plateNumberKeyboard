@@ -327,4 +327,8 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
     void onKeyboardShow();
   }
+
+  public boolean isKeyboardShow() {
+    return isKeyboardShow;
+  }
 }

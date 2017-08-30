@@ -9,11 +9,12 @@ import org.liumingyi.carnokeyboard.plateinputer.PlateNumberEditText;
 
 public class MainActivity extends AppCompatActivity {
 
+  PlateNumberEditText plateNumberEditText;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    PlateNumberEditText plateNumberEditText =
-        (PlateNumberEditText) findViewById(R.id.plate_number_edt);
+    plateNumberEditText = (PlateNumberEditText) findViewById(R.id.plate_number_edt);
     ViewGroup contentArea = (ViewGroup) findViewById(R.id.content_area);
     ViewGroup plateKeyArea = (ViewGroup) findViewById(R.id.plate_number_keyboard);
 
@@ -42,5 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
       }
     });
+  }
+
+  @Override public void onBackPressed() {
+    if (plateNumberEditText.isKeyboardShow()) {
+      plateNumberEditText.hideKeyboard();
+    } else {
+      super.onBackPressed();
+    }
   }
 }
