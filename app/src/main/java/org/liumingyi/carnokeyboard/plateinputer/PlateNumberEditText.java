@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import java.lang.ref.WeakReference;
 import org.liumingyi.carnokeyboard.plateinputer.utils.KeyboardUtils;
 
 /**
@@ -50,6 +52,9 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
   private int contentLayoutOffSetY;
   private boolean isContentMoveUp;
+
+  private WeakReference<Context> contextWeakReference;
+  private InputMethodManager inputMethodManager;
 
   /**
    * 显示键盘的动画监听
@@ -167,6 +172,7 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
   }
 
   private void init(Context context) {
+    contextWeakReference = new WeakReference<>(context);
     screenHeight = KeyboardUtils.getScreenHeight((Activity) getContext());
     fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
     /* 隐藏默认的软键盘 */
@@ -226,9 +232,21 @@ public class PlateNumberEditText extends AppCompatEditText implements View.OnTou
 
   @Override public boolean onTouch(View view, MotionEvent motionEvent) {
     if (!isKeyboardShow && motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+      hideSystemKeyboard(view);
       showKeyboard();
     }
     return false;
+  }
+
+  /**
+   * 如果系统键盘已弹出，关闭系统键盘
+   */
+  private void hideSystemKeyboard(View view) {
+    if (inputMethodManager == null) {
+      inputMethodManager = (InputMethodManager) contextWeakReference.get()
+          .getSystemService(Activity.INPUT_METHOD_SERVICE);
+    }
+    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
   }
 
   /**

@@ -18,7 +18,16 @@
         android:layout_weight="1"
         android:background="@color/red"
         android:orientation="vertical"
-        />
+        >
+
+      <EditText
+          android:layout_width="match_parent"
+          android:layout_height="40dp"
+          android:hint="@string/system_num_keyboard"
+          android:inputType="number"
+          />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,6 +40,7 @@
           android:id="@+id/plate_number_edt"
           android:layout_width="match_parent"
           android:layout_height="40dp"
+          android:hint="@string/car_plate_keyboard"
           android:textSize="16sp"
           />
 

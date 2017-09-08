@@ -4,4 +4,6 @@
   <string name="letter_number_keyboard">字母和数字</string>
   <string name="confirm">确认</string>
   <string name="simple_city_name">城市简称</string>
+  <string name="system_num_keyboard">系统数字键盘输入</string>
+  <string name="car_plate_keyboard">车牌号输入</string>
 </resources>
